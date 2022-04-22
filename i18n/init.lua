@@ -3,15 +3,13 @@ local i18n = {}
 local store
 local locale
 local pluralizeFunction
-local defaultLocale = 'en'
+local defaultLocale = 'c'
 local fallbackLocale = defaultLocale
 
-local currentFilePath = (...):gsub("%.init$","")
-
-local plural      = require(currentFilePath .. '.plural')
-local interpolate = require(currentFilePath .. '.interpolate')
-local variants    = require(currentFilePath .. '.variants')
-local version     = require(currentFilePath .. '.version')
+local plural      = require('i18n.plural')
+local interpolate = require('i18n.interpolate')
+local variants    = require('i18n.variants')
+local version     = require('i18n.version')
 
 i18n.plural, i18n.interpolate, i18n.variants, i18n.version, i18n._VERSION =
   plural, interpolate, variants, version, version
@@ -184,5 +182,11 @@ end
 setmetatable(i18n, {__call = function(_, ...) return i18n.translate(...) end})
 
 i18n.reset()
+
+local lang = os.getenv("LC_ALL")   or
+             os.getenv("LC_CTYPE") or
+             os.getenv("LANG")     or
+             defaultLocale;
+i18n.setLocale(string.match(lang,"%w+"));
 
 return i18n
